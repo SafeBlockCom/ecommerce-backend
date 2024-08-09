@@ -21,10 +21,10 @@ class AdminSeeder extends Seeder
         DB::table('users')->truncate();
         $user = User::create([
             'name' => 'super-admin',
-            'email' => 'superadmin@puranijeans.com',
+            'email' => 'superadmin@safeblockcom.com',
             'country_code' => '92',
             'phone_number' => '0900786015',
-            'password' => Hash::make('images/categories/!'),
+            'password' => Hash::make('Admin123!'),
             'status' => Constant::Yes,
             'user_type' => Constant::USER_TYPES['Admin'],
             'login_attempts' => Constant::No,

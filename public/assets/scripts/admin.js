@@ -4368,7 +4368,7 @@ $(document).ready(function () {
     size: 52,
     lineCap: 'round',
     fill: {
-      color: '#E10202'
+      color: '#673de6'
     }
   }).on('circle-animation-progress', function (event, progress, stepValue) {
     $(this).find('small').html('<span>' + stepValue.toFixed(2).substr(2) + '%<span>');

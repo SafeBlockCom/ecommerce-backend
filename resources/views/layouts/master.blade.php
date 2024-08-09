@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     @include('layouts.common.meta_tags')
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ URL::asset('assets/logo/favicon.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ URL::asset('assets/logo/favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ URL::asset('assets/logo/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ URL::asset('assets/logo/favicon.ico') }}">
     <link rel="stylesheet" href="{{ mix('css/init.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.0.0/sweetalert.min.js"></script>
     <script src="{{ mix('js/admin.js') }}"></script>

@@ -42,7 +42,7 @@ class HomeController
                 'metadata' => [
                     'app_name' => 'SafeBlockCom',
                     'app_title' => 'SafeBlockCom - Your shopping partner',
-                    'favicon' => URL::asset('assets/logo/favicon.png'),
+                    'favicon' => URL::asset('assets/logo/favicon.ico'),
                     'logo' => URL::asset('assets/logo/logo.png'),
                     'logo_white' => URL::asset('assets/logo/logo-bg-white.png'),
                     'banner_background' => URL::asset('assets/banners/backgrounds/home-bg-1.png')

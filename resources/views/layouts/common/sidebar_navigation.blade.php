@@ -80,7 +80,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="app-sidebar__heading">Manage Puraani Jeans Website</li>
+                <li class="app-sidebar__heading">Manage SafeBlock Com Website</li>
                 <li class="
                 {{  (Request::is('closet') ||  Request::is('/closet')) ||
                     (Request::is('closet-orders') ||  Request::is('/closet/orders')) ||

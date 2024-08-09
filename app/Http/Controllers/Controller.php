@@ -9,10 +9,10 @@ use Illuminate\Routing\Controller as BaseController;
 /**
  * @OA\Info(
  *      version="",
- *      title="Puraani Jeans APIs",
- *      description="Puraani Jeans API documentation",
+ *      title="SafeBlock Com APIs",
+ *      description="SafeBlock Com API documentation",
  *      @OA\Contact(
- *          email="developer@puranijeans.com"
+ *          email="developer@safeblockcom.com"
  *      ),
  *      @OA\License(
  *          name="Apache 2.0",

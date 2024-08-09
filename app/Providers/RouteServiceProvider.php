@@ -27,7 +27,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::middleware('web')
-            ->domain(env('WEB_DOMAIN'))
+//            ->domain(env('WEB_DOMAIN'))
             ->namespace('App\Http\Controllers\Web')
             ->group(base_path('routes/web.php'));
     }
@@ -43,7 +43,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         foreach ($this->apiVersions as $apiVersion) {
             Route::prefix($apiVersion['version'])
-                ->domain(env('API_DOMAIN'))
+//                ->domain(env('API_DOMAIN'))
                 ->middleware('api')
                 ->namespace($apiVersion['namespace'])
                 ->group(base_path('routes/' . $apiVersion['version'] . '/api.php'));
