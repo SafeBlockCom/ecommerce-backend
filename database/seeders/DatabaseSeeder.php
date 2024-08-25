@@ -15,18 +15,19 @@ class DatabaseSeeder extends Seeder
 //        $this->call(RolesSeeder::class);
         $this->call(AdminSeeder::class);
 
-//        $this->call(CountriesSeeder::class);
-//        $this->call(ProvinceSeeder::class);
-//        $this->call(CitiesSeeder::class);
-//
-//        $this->call(CustomerSeeder::class);
-//
-//        $this->call(PimBsCategoriesSeeder::class);
-//        $this->call(ClosetSeeder::class);
-//        $this->call(BrandsSeeder::class);
-//        $this->call(PimAttributeAndAttributeOptionsSeeder::class);
-//        $this->call(PimSeeder::class);
-//        $this->call(PimProductDefaultImageSeeder::class);
-//        $this->call(PimBsCategoryMappingSeeder::class);
+        $this->call(CountriesSeeder::class);
+        $this->call(ProvinceSeeder::class);
+        $this->call(CitiesSeeder::class);
+
+        $this->call(CustomerSeeder::class);
+
+        $this->call(PimBsCategoriesSeeder::class);
+        $this->call(ClosetSeeder::class);
+        $this->call(BrandsSeeder::class);
+        $this->call(PimAttributeAndAttributeOptionsSeeder::class);
+        $this->call(PimSeeder::class);
+        $this->call(PimProductDefaultImageSeeder::class);
+        $this->call(PimBsCategoryMappingSeeder::class);
+        $this->call(MinersTableSeeder::class);
     }
 }

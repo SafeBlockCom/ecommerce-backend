@@ -30,8 +30,8 @@ class PimCategory extends Model
             'parent_id' => Constant::No,
         ], [
             'position' => Constant::Yes,
-            'pim_cat_reference' => $bsCategory->slug,
-            'name' => $bsCategory->name,
+            'pim_cat_reference' => isset(optional($bsCategory)->slug) ? optional($bsCategory)->slug : 'X',
+            'name' => optional($bsCategory)->name,
         ]);
 
         //Link Closet category to PimBsCategoryMapping
@@ -48,8 +48,8 @@ class PimCategory extends Model
         ], [
             'position' => Constant::Yes,
             'parent_id' => $parent->id,
-            'pim_cat_reference' => $bsCategory->slug,
-            'name' => $bsCategory->name,
+            'pim_cat_reference' => isset(optional($bsCategory)->slug) ? optional($bsCategory)->slug : 'X',
+            'name' => optional($bsCategory)->name,
         ]);
         //Link Closet category to PimBsCategoryMapping
         PimBsCategoryMapping::mapPimCategory($category, $bsCategory);

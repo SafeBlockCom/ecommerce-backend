@@ -126,12 +126,12 @@ class ClosetProductsController extends Controller
             $customerId = $requestData['customer_id'];
             $customer = Customer::findById($customerId);
             $closet = $customer->closet;
-            if(empty($closet)) {
+            if (empty($closet)) {
                 return ApiResponseHandler::failure("You should create a store first.");
             }
 
             $requestData['closet_id'] = $closet->id;
-            $validator = Validator::make($requestData, PimProduct::getValidationRules('add-product',$requestData));
+            $validator = Validator::make($requestData, PimProduct::getValidationRules('add-product', $requestData));
             if ($validator->fails()) {
                 return ApiResponseHandler::validationError($validator->errors());
             }
@@ -139,7 +139,7 @@ class ClosetProductsController extends Controller
             $customerId = $requestData['customer_id'];
             $customer = Customer::findById($customerId);
             $closet = $customer->closet;
-            if(empty($closet)) {
+            if (empty($closet)) {
                 return ApiResponseHandler::failure("You should create a store first.");
             }
 
@@ -180,17 +180,17 @@ class ClosetProductsController extends Controller
                 'recommended_at' => $requestData['is_recommended'] == Constant::Yes ? Carbon::now() : null,
                 'free_shipment' => $freeShipment ? Constant::Yes : Constant::No,
                 'enable_world_wide_shipping' => array_key_exists('worldWideShipping', $requestData['shipment']) && !empty($requestData['shipment']['worldWideShipping']) ? $requestData['shipment']['worldWideShipping'] : 0,
-                'shipping_price' => $freeShipment ? null : (array_key_exists('shippingPrice', $requestData['shipment']) && !empty($requestData['shipment']['shippingPrice']) ? $requestData['shipment']['shippingPrice'] : 0),
-                'shipment_country' => $freeShipment ? null : (array_key_exists('country', $requestData['shipment']) && !empty($requestData['shipment']['country']) ? $requestData['shipment']['country'] : 0),
+                'shipping_price' => $freeShipment ? 0 : (array_key_exists('shippingPrice', $requestData['shipment']) && !empty($requestData['shipment']['shippingPrice']) ? $requestData['shipment']['shippingPrice'] : 0),
+//                'shipment_country' => $freeShipment ? 0 : (array_key_exists('country', $requestData['shipment']) && !empty($requestData['shipment']['country']) ? $requestData['shipment']['country'] : 0),
+            'shipment_country' => '0'
             ]);
             #Add PIM Product Images
             $pimProductImages = [];
 
             foreach ($requestData['images'] as $key2 => $image) {
-                $imgFileName = Helper::clean(trim(strtolower($productSku."-".$key2)));
-                $imgFilePath = "images/closets/" . $closet->id . "/products/" ;
+                $imgFileName = Helper::clean(trim(strtolower($productSku . "-" . $key2)));
+                $imgFilePath = "images/closets/" . $closet->id . "/products/";
                 $imgImage = Helper::uploadFileToApp($image['preview'], $imgFileName, $imgFilePath);
-
                 $image = PimProductImage::create([
                     'product_id' => $pimProduct->id,
                     'url' => $imgImage,
@@ -211,14 +211,15 @@ class ClosetProductsController extends Controller
 
             PimProductCategory::addPimCategory($pimProduct, $parentCategory, $category);
             #Add PIM Product Variants
-            foreach ($requestData['variants'] as $key3 => $variants) {
-                $pimVariants = [];
-                $variantAttribute = [];
-                $variantTitles = [];
-                $variantTitle = "";
-                $variantSKUs = [];
-                $variantSKU = $productSku;
-                foreach ($variants['variation'] as $key4 => $attributes) {
+            if(isset($requestData['variants'])) {
+                foreach ($requestData['variants'] as $key3 => $variants) {
+                    $pimVariants = [];
+                    $variantAttribute = [];
+                    $variantTitles = [];
+                    $variantTitle = "";
+                    $variantSKUs = [];
+                    $variantSKU = $productSku;
+                    foreach ($variants['variation'] as $key4 => $attributes) {
                         $attr = $attributes['name'];
                         $options = implode(' ', (array)$attributes['value']);
 
@@ -237,38 +238,39 @@ class ClosetProductsController extends Controller
 
                         $variantTitles[$key3] = (string)$variantTitle;
                         $variantSKUs[$key3] = (string)$variantSKU;
-                }
-                $pimVariants[$key3] = [
-                    'attr' => $variantAttribute[$key3],
-                    'variantTitles' => $variantTitles[$key3],
-                    'variantSKU' => $variantSKUs[$key3],
-                ];
+                    }
+                    $pimVariants[$key3] = [
+                        'attr' => $variantAttribute[$key3],
+                        'variantTitles' => $variantTitles[$key3],
+                        'variantSKU' => $variantSKUs[$key3],
+                    ];
 
-                foreach ($pimVariants as $vKey => $variant) {
-                    $pimProductVariants = PimProductVariant::create([
-                        'product_id' => $pimProduct->id,
-                        'product_variant' => $variant['variantTitles'],
-                        'sku' => $variant['variantSKU'],
-                        'quantity' => $variants['qty'],
-                        'price' => $variants['price'],
-                        'discount' => ($variants['discounted_price'] > 0 && ($variants['discounted_price']) < $variants['price']) ? $variants['discounted_price'] : 0,
-                        'discount_type' => Constant::DISCOUNT_TYPE['flat'],
-                        'image_id' => !empty($pimProductImages) ? $pimProductImages[0] : 0,
-                        'short_description' => $variants['description'],
-                        'status' => Constant::Yes,
-                    ]);
-                    foreach ($variant['attr'] as $key5 => $attributes) {
-                        foreach ($attributes as $attribute) {
-                            $_attr = $attribute;
-                            try {
-                                PimProductVariantOption::saveProductAttributeOption([
-                                    'product_id' => $pimProduct->id,
-                                    'variant_id' => $pimProductVariants->id,
-                                    'attribute_id' => $attributes['attrId'],
-                                    'option_id' => $attributes['optionId'],
-                                ]);
-                            } catch (\Exception $e) {
-                                AppException::log($e);
+                    foreach ($pimVariants as $vKey => $variant) {
+                        $pimProductVariants = PimProductVariant::create([
+                            'product_id' => $pimProduct->id,
+                            'product_variant' => $variant['variantTitles'],
+                            'sku' => $variant['variantSKU'],
+                            'quantity' => $variants['qty'],
+                            'price' => $variants['price'],
+                            'discount' => ($variants['discounted_price'] > 0 && ($variants['discounted_price']) < $variants['price']) ? $variants['discounted_price'] : 0,
+                            'discount_type' => Constant::DISCOUNT_TYPE['flat'],
+                            'image_id' => !empty($pimProductImages) ? $pimProductImages[0] : 0,
+                            'short_description' => $variants['description'],
+                            'status' => Constant::Yes,
+                        ]);
+                        foreach ($variant['attr'] as $key5 => $attributes) {
+                            foreach ($attributes as $attribute) {
+                                $_attr = $attribute;
+                                try {
+                                    PimProductVariantOption::saveProductAttributeOption([
+                                        'product_id' => $pimProduct->id,
+                                        'variant_id' => $pimProductVariants->id,
+                                        'attribute_id' => $attributes['attrId'],
+                                        'option_id' => $attributes['optionId'],
+                                    ]);
+                                } catch (\Exception $e) {
+                                    AppException::log($e);
+                                }
                             }
                         }
                     }

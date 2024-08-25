@@ -100,7 +100,7 @@
                         <li class="{{ (Request::is('closet') ||  Request::is('/closet')) ? 'mm-active' : '' }}">
                             <a href="{{ URL::to('/closet') }}">
                                 <i class="metismenu-icon"></i>
-                                Shop Management
+                                Stores Management
                                 <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                             </a>
                             <ul
@@ -108,7 +108,7 @@
                                 <li class="{{ (Request::is('closet') ||  Request::is('/closet')) ? 'mm-active' : '' }}">
                                     <a href="{{ URL::to('/closet') }}">
                                         <i class="metismenu-icon">
-                                        </i>Shop
+                                        </i>Stores
                                     </a>
                                 </li>
                             </ul>

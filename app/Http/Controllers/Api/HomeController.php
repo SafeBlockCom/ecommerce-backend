@@ -18,6 +18,7 @@ use App\Models\PimBrand;
 use App\Models\PimBsCategory;
 use App\Models\PimProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
 class HomeController
@@ -179,12 +180,12 @@ class HomeController
     public function getCachedBanner($type = "general")
     {
         $cacheKey = 'get_app_banners';
-//        return Cache::remember($cacheKey, env('CACHE_REMEMBER_SECONDS'), function () {
+        return Cache::remember($cacheKey, env('CACHE_REMEMBER_SECONDS'), function () use($type) {
             if($type == "auth")
                 return self::getAuthBanners();
             else
                 return PimBsCategory::getAllFeaturedCategories();
-//        });
+        });
     }
 
     private static function getAuthBanners()
@@ -208,9 +209,9 @@ class HomeController
     public function getCachedRecommendedProducts()
     {
         $cacheKey = 'get_app_recommended_products';
-//        return Cache::remember($cacheKey, env('CACHE_REMEMBER_SECONDS'), function () {
-        return self::getRecommendedItems();
-//        });
+        return Cache::remember($cacheKey, env('CACHE_REMEMBER_SECONDS'), function () {
+            return self::getRecommendedItems();
+        });
     }
 
     private static function getRecommendedItems()
@@ -233,7 +234,6 @@ class HomeController
     public function getCachedBrands()
     {
         $cacheKey = 'get_app_brands';
-//        return Cache::remember($cacheKey, env('CACHE_REMEMBER_SECONDS'), function () {
         return [
             [
                 'index' => 1,
@@ -302,9 +302,9 @@ class HomeController
         $listOptionsSectionA = [
             'limit_record' => 8
         ];
-//        $cacheKey = 'get_featured_categories';
-//        return Cache::remember($cacheKey, env('CACHE_REMEMBER_SECONDS'), function () {
+        $cacheKey = 'get_featured_categories';
+        return Cache::remember($cacheKey, env('CACHE_REMEMBER_SECONDS'), function () use($listType, $listOptionsSectionA){
             return  PimProduct::getProductsForApp($listType, 8, $listOptionsSectionA, true);
-//        });
+        });
     }
 }

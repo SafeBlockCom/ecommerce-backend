@@ -14,6 +14,17 @@ class Constant
         'success'   => '00',
     ];
 
+    const ORDER_STATUS = [
+        'created'       => 1,
+        'initiated'     => 2,
+        'placed'        => 3,
+        'awaiting-confirmation' => 4,
+        'cancelled' => 5,
+        'expired' => 6,
+        'failed' => 7,
+        'awaiting-payment' => 8,
+    ];
+
     const USER_TYPES = [
         'Super-Admin' => 0,
         'Admin'       => 1,

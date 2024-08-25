@@ -52,11 +52,11 @@ class PimProduct extends Model
                 'brands' => 'required',
                 'brands.value' => 'required|numeric|'.Rule::exists('pim_brands', 'id'),
 
-                'variants' => 'required',
-                'variants.*.price' => 'required|numeric',
-                'variants.*.discounted_price' => 'required|numeric',
-                'variants.*.qty' => 'required|numeric|gt:0',
-                'variants.*.description' => 'required|string',
+//                'variants' => 'required',
+//                'variants.*.price' => 'required|numeric',
+//                'variants.*.discounted_price' => 'required|numeric',
+//                'variants.*.qty' => 'required|numeric|gt:0',
+//                'variants.*.description' => 'required|string',
 
                 'variants.variation.*' => 'required|array',
                 'variants.variation.*.name' => 'required|string|'.Rule::exists('pim_attributes', 'name'),
@@ -198,7 +198,7 @@ class PimProduct extends Model
             ->withDefault([
                 'id' => optional($defaultImage)->id,
                 'product_id' => optional($defaultImage)->product_id,
-                'url' => !empty($defaultImage) ? optional($defaultImage)->getAttributes()['url'] : PimProductImage::getPlaceholder(),
+                'url' => !empty($defaultImage) ? 'storage/'.optional($defaultImage)->getAttributes()['url'] : PimProductImage::getPlaceholder(),
             ]);
     }
 
@@ -528,11 +528,9 @@ class PimProduct extends Model
                 $products->where('pim_products.id', '<>', $excludedProductId);
             }
         }
-
         if (!empty($filterByProductIds)) {
             $products = $products->whereIn('pim_products.id', $filterByProductIds);
         }
-
         $products = $products->with([
             'defaultImage:id,product_id,url,position',
             'closet' => function ($query) {
@@ -648,7 +646,6 @@ class PimProduct extends Model
             }
         }
 
-
         if($listingType == Constant::PJ_PRODUCT_LIST['FEATURED_PRODUCTS']){
             $products->where('is_featured', Constant::Yes);
             $products->orderBy('featured_position','ASC');
@@ -678,7 +675,8 @@ class PimProduct extends Model
                 }
                 $filteredProducts->orderBy('recommended_position','DESC');
             }
-        }else if($listingType == Constant::PJ_PRODUCT_LIST['CLOSET_TRENDING_PRODUCTS'] && !empty($closet)){
+        }
+        else if($listingType == Constant::PJ_PRODUCT_LIST['CLOSET_TRENDING_PRODUCTS'] && !empty($closet)){
             $products->where('pim_products.closet_id', $closet->id);
             if(!empty($categoryId)){
                 $products->whereHas('category', function ($query) use ($categoryId) {
@@ -722,7 +720,6 @@ class PimProduct extends Model
             $products->orderBy('recently_viewed_created_at','DESC');
         }
 
-
         $productMax = $products->max('price');
         $productMin = $products->min('price');
 
@@ -750,10 +747,10 @@ class PimProduct extends Model
         $productsTransformed = $productsTransformed
             ->map(function ($item) use ($slug, $listingType, $category, $filters) {
                 $defaultVariant = $item->activeVariants->first();
-                $discountType = $defaultVariant->discount_type;
-                $price = $defaultVariant->price;
-                $discount = $defaultVariant->discount;
-                $discountedPrice = $defaultVariant->discounted_price;
+                $discountType = optional($defaultVariant)->discount_type;
+                $price = optional($defaultVariant)->price;
+                $discount = optional($defaultVariant)->discount;
+                $discountedPrice = optional($defaultVariant)->discounted_price;
                 if ($listingType == Constant::PJ_PRODUCT_LIST['CATEGORY_PRODUCTS']) {
                     $position = $item->rank;
                 } else if ($listingType == Constant::PJ_PRODUCT_LIST['FEATURED_PRODUCTS']) {
@@ -792,7 +789,7 @@ class PimProduct extends Model
                     'description' => $item->short_description,
                     'variant_count' => $item->activeVariants->count(),
                     'attribute_count' => $item->attribute->count(),
-                    'default_variant_id' => $defaultVariant->variant_id,
+                    'default_variant_id' => optional($defaultVariant)->variant_id,
                     'category' => $pimCategory,
                     'category_name' => !empty($category) && !empty($category->parent) ? $category->parent->name : optional($category)->name,
                     'category_id' => !empty($category) && !empty($category->parent) ? $category->parent->id : optional($category)->id,

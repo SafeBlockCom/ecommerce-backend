@@ -14,13 +14,14 @@ use App\Helpers\AppException;
 use App\Helpers\Helper;
 use App\Models\Closet;
 use App\Models\Customer;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController
 {
     /**
-     * @OA\Get(
+     * @OA\Post(
      *
      *     path="/v1/customer",
      *     tags={"Customer"},
@@ -220,5 +221,4 @@ class CustomerController
         ];
         return ApiResponseHandler::success($response, "Your settings have been updated as per your preferences.");
     }
-
 }

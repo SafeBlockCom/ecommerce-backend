@@ -41,10 +41,7 @@ class PimSeeder extends Seeder
             DB::table('pim_product_variant_options')->truncate();
 
             $closet = DB::table('closets')->where('closet_name', "SH Bridals")->first();
-            $brands = PimBrand::updateOrCreate([
-                'closet_id' => $closet->id,
-                'name' => "Unstitched",
-            ]);
+            $brands = PimBrand::where('name', 'Apparel')->first();
             $products = (object)[
                 [
                     'closet_id' => $closet->id,
@@ -1465,7 +1462,7 @@ class PimSeeder extends Seeder
             }
 
         } catch (\Exception $e) {
-            return $e->getMessage();
+            echo $e->getTraceAsString();
             AppException::log($e);
         }
     }

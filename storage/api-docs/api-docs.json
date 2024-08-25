@@ -4,7 +4,7 @@
         "title": "SafeBlock Com APIs",
         "description": "SafeBlock Com API documentation",
         "contact": {
-            "email": "developer@puranijeans.com"
+            "email": "developer@safeblockcom.com"
         },
         "license": {
             "name": "Apache 2.0"
@@ -503,7 +503,7 @@
             }
         },
         "/v1/customer": {
-            "get": {
+            "post": {
                 "tags": [
                     "Customer"
                 ],
@@ -697,6 +697,120 @@
                         "description": "Success"
                     }
                 }
+            }
+        },
+        "/v1/order/create": {
+            "post": {
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Create Order using Access Token",
+                "operationId": "createOrder",
+                "requestBody": {
+                    "description": "Create Order",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "total_amount": {
+                                        "description": "Order Total Amount",
+                                        "type": "number"
+                                    },
+                                    "sub_total_amount": {
+                                        "description": "Order Sub Total Amount",
+                                        "type": "number"
+                                    },
+                                    "discount_amount": {
+                                        "description": "Order Discount Amount",
+                                        "type": "number"
+                                    },
+                                    "products": {
+                                        "description": "List of Products in Customer Cart",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "Product Id",
+                                                    "type": "string"
+                                                },
+                                                "name": {
+                                                    "description": "Product Name",
+                                                    "type": "string"
+                                                },
+                                                "sku": {
+                                                    "description": "Product SKU",
+                                                    "type": "string"
+                                                },
+                                                "quantity": {
+                                                    "description": "Product Quantity",
+                                                    "type": "integer"
+                                                },
+                                                "price": {
+                                                    "description": "Product Price",
+                                                    "type": "number"
+                                                },
+                                                "sale_price": {
+                                                    "description": "Product Sale Price",
+                                                    "type": "number"
+                                                },
+                                                "image": {
+                                                    "description": "Product Image URL",
+                                                    "type": "string"
+                                                },
+                                                "short_description": {
+                                                    "description": "Product Short Description",
+                                                    "type": "string"
+                                                },
+                                                "description": {
+                                                    "description": "Product Description",
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "customer": {
+                                        "description": "Customer Details",
+                                        "properties": {
+                                            "auth_code": {
+                                                "description": "Customer SSO Auth Code",
+                                                "type": "string"
+                                            },
+                                            "name": {
+                                                "description": "Customer Name",
+                                                "type": "string"
+                                            },
+                                            "email": {
+                                                "description": "Customer Email",
+                                                "type": "string"
+                                            },
+                                            "country_code": {
+                                                "description": "Country Code",
+                                                "type": "string"
+                                            },
+                                            "phone_number": {
+                                                "description": "Customer Phone Number",
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "merchant_access_token": []
+                    }
+                ]
             }
         },
         "/v1/send/otp": {
@@ -1096,6 +1210,10 @@
         {
             "name": "Metadata",
             "description": "Metadata"
+        },
+        {
+            "name": "Order",
+            "description": "Order"
         },
         {
             "name": "Auth Verification",

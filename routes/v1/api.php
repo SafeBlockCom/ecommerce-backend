@@ -16,7 +16,7 @@ use App\Http\Controllers\Api\PlaygroundTestController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Closet\ClosetProductsController;
 use App\Http\Controllers\Api\Closet\ClosetController;
-
+use App\Http\Controllers\Api\OrderController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -74,6 +74,9 @@ Route::get('/closet/{slug}/category/{catSlug}/product', [ClosetProductsControlle
 
 Route::post('customer', [CustomerController::class, 'getCustomerMetaContent'])->middleware(['tokenValidation']);
 
+Route::post('order/status',  [OrderController::class, 'orderStatus']);
+Route::get('order/status/{order_ref}',  [OrderController::class, 'fetchOrderStatus']);
+
 Route::middleware(['tokenValidation'])->group(function () {
 
     Route::post('send/otp', [OtpController::class, "sendOtp"]);
@@ -89,6 +92,10 @@ Route::middleware(['tokenValidation'])->group(function () {
     #Recently Viewed Products
     Route::post('/recently-viewed-products',  [RecentlyViewedProductController::class, 'getRecentlyViewedProducts']);
 
+    Route::post('/order/create',  [OrderController::class, 'createOrder']);
+    Route::post('/order/pay',  [OrderController::class, 'payOrder']);
 //    Route::post('/closet/create', [CustomerController::class, 'createCloset']);
     Route::post('product/{productId}',  [ProductController::class, 'getProductDetail']);
+    Route::get('/order/complete', [OrderController::class, 'completeOrder'])->name('order.complete');
+
 });

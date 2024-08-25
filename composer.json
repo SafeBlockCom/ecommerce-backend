@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.8",
         "sentry/sentry-laravel": "^4.7",
         "spatie/laravel-permission": "^6.9",
+        "stripe/stripe-php": "^15.7",
         "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {

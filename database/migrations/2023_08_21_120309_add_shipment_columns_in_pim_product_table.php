@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pim_products', function (Blueprint $table) {
-            $table->boolean('free_shipment')->after('max_quantity');
-            $table->boolean('enable_world_wide_shipping')->after('free_shipment');
-            $table->boolean('shipping_price')->after('enable_world_wide_shipping');
+            $table->boolean('free_shipment')->nullable()->after('max_quantity');
+            $table->boolean('enable_world_wide_shipping')->nullable()->after('free_shipment');
+            $table->boolean('shipping_price')->nullable()->after('enable_world_wide_shipping');
         });
     }
 
