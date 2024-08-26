@@ -193,19 +193,15 @@ App.Closet = {
     },
     initializeClosetOrdersDataTable: function (ref) {
         let table_name = "closet_orders_table";
-        let url = App.Helpers.generateApiURL(App.Constants.endPoints.getClosetsProducts) + ref;
+        let url = App.Helpers.generateApiURL(App.Constants.endPoints.getClosetsOrders) + ref;
         let sortColumn = [[2, "desc"]];
         let columns = [
             {data: 'check', name: 'check', orderable: false, searchable: false, className: 'show'},
-            {data: "name", name: "name", orderable: true, searchable: true},
-            {data: "bs_category", name: "bs_category", orderable: true, searchable: false},
-            {data: "category_name", name: "category_name", orderable: true, searchable: false},
-            {data: "price", name: "price", orderable: true, searchable: true},
-            {data: "discounted_price", name: "discounted_price", orderable: true, searchable: true},
-            {data: "quantity", name: "quantity", orderable: true, searchable: true},
-            {data: "image", name: "image", orderable: true, searchable: false},
-            {data: "shipping_price", name: "shipping_price", orderable: true, searchable: true},
-            {data: "status", name: "status", orderable: true, searchable: true},
+            {data: "order_id", name: "order_id", orderable: true, searchable: false},
+            {data: "customer_id", name: "customer_id", orderable: true, searchable: false},
+            {data: "placement_status", name: "placement_status", orderable: true, searchable: true},
+            {data: "total_amount", name: "total_amount", orderable: true, searchable: true},
+            {data: "block_ref", name: "block_ref", orderable: true, searchable: true},
             {data: "created_at", name: "created_at", orderable: true, searchable: true},
             {data: "updated_at", name: "updated_at", orderable: true, searchable: true}
         ];

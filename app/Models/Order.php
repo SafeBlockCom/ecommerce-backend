@@ -84,6 +84,10 @@ class Order extends Model
         return self::where('order_id', $ref)->first();
     }
 
+    public static function findById($id){
+        return self::where('id', $id)->first();
+    }
+
     public static function createOrder($request, $customer_id, $closet_id)
     {
         $orderData = [
@@ -166,4 +170,33 @@ class Order extends Model
         $result['billing_details'] = $this->billingInfo;
         return $result;
     }
+    public static function getByFilters($filter, $ref)
+    {
+        $fields = [
+            "order_id",
+            "customer_id",
+            "placement_status",
+            "total_amount",
+            "sub_total_amount",
+            "discount_amount",
+            "shipment_charges",
+            "payment_intent_id",
+            "block_ref",
+            "payment_method",
+            'created_at'
+        ];
+
+        $products = self::select($fields)
+            ->where('closet_id', $ref)
+            ->get();
+
+        $count = $products->count();
+
+        return [
+            'count'   => $count,
+            'offset'  => isset($filter['start']) ? $filter['start'] : 0,
+            'records' => $products
+        ];
+    }
+
 }

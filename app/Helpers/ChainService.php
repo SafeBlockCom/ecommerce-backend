@@ -22,7 +22,7 @@ class ChainService
         ];
 
         try {
-            $bRequest = new Request('POST', 'http://localhost:3000/addTransaction', $headers, json_encode($body));
+            $bRequest = new Request('POST', env("BLOCKCHAIN_APP_LINK").'/addTransaction', $headers, json_encode($body));
             $res = $client->sendAsync($bRequest)->wait();
             $responseBody = $res->getBody()->getContents(); // Ensure the body content is returned correctly
             // Parse the JSON response into a PHP array
@@ -30,7 +30,7 @@ class ChainService
             return $responseData;
         } catch (RequestException $e) {
             // Log the error message for debugging
-            AppException::log($e->getMessage());
+            AppException::log($e);
             return null; // Return null or handle the error as needed
         }
     }

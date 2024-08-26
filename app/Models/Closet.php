@@ -68,6 +68,10 @@ class Closet extends Model
         return self::where('closet_reference', $ref)->first();
     }
 
+    public static function findById($id){
+        return self::where('id', $id)->first();
+    }
+
     public static function getByFilters($filter)
     {
         $data = self::select('id', 'customer_id', 'closet_name', 'closet_reference', 'status', 'logo', 'banner', 'is_trending', 'trending_position', 'created_at','updated_at');

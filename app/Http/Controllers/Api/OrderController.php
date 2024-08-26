@@ -198,14 +198,14 @@ class OrderController
     {
         $body = [
             'type' => "order",
-            'sender' => $customer->first_name." ".$customer->last_name,
+            'sender' => $customer->first_name . " " . $customer->last_name,
             'recipient' => $closet->closet_reference,
             'amount' => $order->total_amount,
             'data' => [
                 "orderId" => $order->order_id
             ],
         ];
-        $result = (array) ChainService::addTransaction($body);
+        $result = (array)ChainService::addTransaction($body);
         return $result['data']['transaction']['identifier'];
     }
 
@@ -255,9 +255,6 @@ class OrderController
             $order = Order::findByRef($requestData['order_ref']);
             $response['order_ref'] = $order->order_id;
 
-            // Save the payment intent ID with the order if needed
-            $returnUrl = route('order.complete'); // Make sure this route exists
-
             $paymentIntent = PaymentIntent::create([
                 'amount' => $order->total_amount * 100, // Amount in cents
                 'currency' => 'GBP',
@@ -265,32 +262,22 @@ class OrderController
                 'confirmation_method' => 'automatic',
                 'confirm' => true,
                 'payment_method_types' => ['card'],
-//                'automatic_payment_methods' => [
-//                    "enabled" => true,
-//                    "allow_redirects" => "never",// Disables redirect-based payment methods
-//                ],
-//                'return_url' => $returnUrl,
-                'return_url' => 'http://localhost:3001/order/completed?order_ref='.$order->order_id,
+                'return_url' => env("SHOPPING_APP_LINK") . '/order/completed?order_ref=' . $order->order_id,
             ]);
             $order->payment_intent_id = $paymentIntent->id;
             $order->save();
 
+            PaymentStatusUpdate::findOrderStatus($order, $paymentIntent);
             $response['payment_intent'] = $paymentIntent;
             // Retrieve the Payment Intent from Stripe
             $paymentIntent = PaymentIntent::retrieve($paymentIntent->id);
-// Confirm the PaymentIntent
+            PaymentStatusUpdate::findOrderStatus($order, $paymentIntent);
+            // Confirm the PaymentIntent
             $paymentIntent = $paymentIntent->confirm([
                 'payment_method' => $requestData['payment_method_id'],
             ]);
-            PaymentStatusUpdate::create([
-                "order_id" => $order->id,
-                "prev_payment_status" => 0,
-                "updated_payment_status" => $paymentIntent->status,
-                "retry_attempt_count" => 0,
-                "last_retry_attempted" => Carbon::now(),
-            ]);
+
             if ($paymentIntent->status === 'requires_action') {
-//                $response = [];
                 $response['order_completed'] = Constant::No;
                 $response['order_ref'] = $order->order_id;
                 $response['requires_action'] = Constant::Yes;
@@ -306,7 +293,7 @@ class OrderController
             $status = $paymentIntent->status;
             if ($status == "succeeded") {
                 $order->placement_status = Constant::ORDER_STATUS['placed'];
-            }else if ($status == "processing") {
+            } else if ($status == "processing") {
                 $order->placement_status = Constant::ORDER_STATUS['awaiting-confirmation'];
             } else if ($status == "canceled") {
                 $order->placement_status = Constant::ORDER_STATUS['cancelled'];
@@ -334,26 +321,6 @@ class OrderController
         }
     }
 
-    // Optional: Define the route that handles the return from Stripe
-    public function completeOrder(Request $request)
-    {
-        // Handle the order completion after the customer is redirected back from Stripe
-        // Here you should verify the payment and update the order status accordingly
-
-        // For example:
-        $paymentIntentId = $request->query('payment_intent');
-        $order = Order::where('payment_intent_id', $paymentIntentId)->first();
-
-
-        if ($order && $order->isPaid()) {
-            return redirect()->away("http://localhost:3001/payment");
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Order completion failed.',
-        ], 500);
-    }
 
     public function orderStatus(Request $request)
     {
@@ -368,11 +335,17 @@ class OrderController
             $order = Order::findByRef($requestData['order_ref']);
             $response['order_ref'] = $order->order_id;
 
-            $paymentIntent = PaymentIntent::retrieve($order->payment_intent_id);
+            $paymentIntent = [];
+            if(!empty($order->payment_intent_id)) {
+                $paymentIntent = PaymentIntent::retrieve($order->payment_intent_id);
+            }
+
+            PaymentStatusUpdate::findOrderStatus($order, $paymentIntent);
+
             // Confirm the Payment Intent
-//            $paymentIntent->confirm();
             $response['intent'] = $paymentIntent;
             $response['order'] = $order->getStatusCallback();
+            $response['status_updated'] = PaymentStatusUpdate::where('order_id', $order->id)->first();
 
             return ApiResponseHandler::success($response, "Order status update successfully.");
 
@@ -391,17 +364,22 @@ class OrderController
             $order = Order::findByRef($orderRef);
             $response['order_ref'] = $order->order_id;
 
-            if(empty($order)) {
+            if (empty($order)) {
                 return ApiResponseHandler::failure('Order not found');
             }
-            if(empty($order->payment_intent_id)) {
-                return ApiResponseHandler::failure('Unable to find payment intent');
+
+            // Retrieve the Payment Intent from Stripe
+            $paymentIntent = [];
+            if(!empty($order->payment_intent_id)) {
+                $paymentIntent = PaymentIntent::retrieve($order->payment_intent_id);
             }
-            $paymentIntent = PaymentIntent::retrieve($order->payment_intent_id);
-            // Confirm the Payment Intent
-//            $paymentIntent->confirm();
-            $response['intent'] = $paymentIntent;
+//            return [
+//                '$order' => $order,
+//                '$paymentIntent' =>$paymentIntent
+//            ];
+            PaymentStatusUpdate::findOrderStatus($order, $paymentIntent);
             $response['order'] = $order->getStatusCallback();
+            $response['status_updated'] = PaymentStatusUpdate::where('order_id', $order->id)->first();
 
             return ApiResponseHandler::success($response, "Order status update successfully.");
 

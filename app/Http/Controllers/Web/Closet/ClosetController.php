@@ -9,6 +9,7 @@ use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
 use App\Models\Closet;
 use App\Models\CustomerProductRecentlyViewed;
+use App\Models\Order;
 use App\Models\PimProduct;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
@@ -154,6 +155,27 @@ class ClosetController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
+    public function getOrderListingRecord(Request $request, $ref)
+    {
+        try {
+            $filter = $request->all();
+            $closet = Closet::findByReference($ref);
+            $usersRecord = Order::getByFilters($filter, $closet->id);
+            $response = $this->makeOrdersListingDatatable($usersRecord);
+            return $response;
+        } catch (\Exception $e) {
+            AppException::log($e);
+            dd($e->getTraceAsString());
+        }
+    }
+
+
+    /**
+     * Get list of the specified resource from storage.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
     public function getProductListingRecord(Request $request, $ref)
     {
         try {
@@ -166,6 +188,29 @@ class ClosetController extends Controller
             AppException::log($e);
             dd($e->getTraceAsString());
         }
+    }
+
+    private function makeOrdersListingDatatable($data)
+    {
+        return DataTables::of($data['records'])
+            ->addColumn('check', function ($rowdata) {
+                $disabled = '';
+                return '<input type="checkbox" ' . $disabled . ' name="data_raw_id[]"  class="theClass" value="' . $rowdata['id'] . '">';
+            })
+            ->addColumn('created_at', function ($rowdata) {
+                return Helper::dated_by(null,$rowdata['created_at']);
+            })
+            ->addColumn('updated_at', function ($rowdata) {
+                return Helper::dated_by(null,$rowdata['updated_at']);
+            })
+            ->rawColumns(['check', 'created_at','updated_at'])
+            ->setOffset($data['offset'])
+            ->with([
+                "recordsTotal" => $data['count'],
+                "recordsFiltered" => $data['count'],
+            ])
+            ->setTotalRecords($data['count'])
+            ->make(true);
     }
 
     private function makeProductListingDatatable($data)
@@ -285,7 +330,7 @@ class ClosetController extends Controller
             $closetProductIds = PimProduct::findProductIdsByCloset($closet->id);
             $data['closet'] = $closet;
             $data['dashboard'] = (object) [
-                'order_count' => 0,
+                'order_count' => Order::where('closet_id', $closet->id)->count(),
                 'product_view_count' => CustomerProductRecentlyViewed::findCountByClosetProductIds($closetProductIds),
                 'product_sold_count' => 0,
                 'follower_count' => CustomerProductRecentlyViewed::findCountByClosetProductIds($closetProductIds),

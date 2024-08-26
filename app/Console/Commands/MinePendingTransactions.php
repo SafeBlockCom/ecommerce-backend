@@ -38,11 +38,11 @@ class MinePendingTransactions extends Command
             ];
 
             $body = json_encode([
-                'minerAddress' => $miner->identifier,
+                'minerAddress' => $miner->name." - ".$miner->identifier,
             ]);
 
             try {
-                $response = $client->post('http://localhost:3000/minePendingTransactions', [
+                $response = $client->post(env("BLOCKCHAIN_APP_LINK").'/minePendingTransactions', [
                     'headers' => $headers,
                     'body'    => $body,
                 ]);

@@ -96,6 +96,5 @@ Route::middleware(['tokenValidation'])->group(function () {
     Route::post('/order/pay',  [OrderController::class, 'payOrder']);
 //    Route::post('/closet/create', [CustomerController::class, 'createCloset']);
     Route::post('product/{productId}',  [ProductController::class, 'getProductDetail']);
-    Route::get('/order/complete', [OrderController::class, 'completeOrder'])->name('order.complete');
 
 });
