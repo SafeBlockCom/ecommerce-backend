@@ -9,6 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         \App\Console\Commands\MinePendingTransactions::class,
+        \App\Console\Commands\GenerateOrders::class,
     ];
     /**
      * Define the application's command schedule.

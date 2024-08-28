@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Miner;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class MinersTableSeeder extends Seeder
@@ -15,7 +16,10 @@ class MinersTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 15; $i++) {
+
+        DB::table('miners')->truncate();
+
+        for ($i = 1; $i <= 8; $i++) {
             Miner::create([
                 'identifier' => Str::uuid()->toString(),
                 'name' => 'Miner ' . $i,

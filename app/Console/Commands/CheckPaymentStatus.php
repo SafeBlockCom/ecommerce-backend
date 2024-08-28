@@ -86,7 +86,7 @@ class CheckPaymentStatus extends Command
             // Add Blockchain
             if(empty($order->block_ref)) {
                 $blockchain = self::blockchain($order, $order->customer, $order->closet);
-                echo $blockchain;
+                echo $blockchain." \n";
                 $response['chain'] = $blockchain;
                 $order->block_ref = $blockchain;
                 $order->save();
